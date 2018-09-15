@@ -152,6 +152,8 @@ REQUIRED_USE="
 PATCHES=(
 	"${FILESDIR}/php-freetype-2.9.1.patch"
 	"${FILESDIR}/ac_try_run-crosscompile.patch"
+	"${FILESDIR}/iconv.patch"
+	"${FILESDIR}/flock-type-crosscompile.patch"
 )
 
 PHP_MV="$(ver_cut 1)"
@@ -247,64 +249,63 @@ src_configure() {
 	)
 
 	our_conf+=(
-		$(use_with argon2 password-argon2 "${EPREFIX}/usr")
+		$(use_with argon2 password-argon2 "${EROOT}/usr")
 		$(use_enable bcmath bcmath)
-		$(use_with bzip2 bz2 "${EPREFIX}/usr")
+		$(use_with bzip2 bz2 "${EROOT}/usr")
 		$(use_enable calendar calendar)
 		$(use_enable coverage gcov)
 		$(use_enable ctype ctype)
-		$(use_with curl curl "${EPREFIX}/usr")
+		$(use_with curl curl "${EROOT}/usr")
 		$(use_enable xml dom)
-		$(use_with enchant enchant "${EPREFIX}/usr")
+		$(use_with enchant enchant "${EROOT}/usr")
 		$(use_enable exif exif)
 		$(use_enable fileinfo fileinfo)
 		$(use_enable filter filter)
 		$(use_enable ftp ftp)
-		$(use_with nls gettext "${EPREFIX}/usr")
-		$(use_with gmp gmp "${EPREFIX}/usr")
+		$(use_with nls gettext "${EROOT}/usr")
+		$(use_with gmp gmp "${EROOT}/usr")
 		$(use_enable hash hash)
-		$(use_with mhash mhash "${EPREFIX}/usr")
-		$(use_with iconv iconv \
-			$(use elibc_glibc || use elibc_musl || use elibc_FreeBSD || echo "${EPREFIX}/usr"))
+		$(use_with mhash mhash "${EROOT}/usr")
+		$(use_with iconv iconv )
 		$(use_enable intl intl)
 		$(use_enable ipv6 ipv6)
 		$(use_enable json json)
-		$(use_with kerberos kerberos "${EPREFIX}/usr")
+		$(use_with kerberos kerberos "${EROOT}/usr")
 		$(use_enable xml libxml)
 		$(use_with xml libxml-dir "${EROOT}/usr")
 		$(use_enable unicode mbstring)
 		$(use_with unicode onig "${EROOT}/usr")
-		$(use_with ssl openssl "${EPREFIX}/usr")
-		$(use_with ssl openssl-dir "${EPREFIX}/usr")
+		$(use_with ssl openssl "${EROOT}/usr")
+		$(use_with ssl openssl-dir "${EROOT}/usr")
 		$(use_enable pcntl pcntl)
 		$(use_enable phar phar)
 		$(use_enable pdo pdo)
 		$(use_enable opcache opcache)
-		$(use_with postgres pgsql "${EPREFIX}/usr")
+		$(use_with postgres pgsql "${EROOT}/usr")
 		$(use_enable posix posix)
-		$(use_with spell pspell "${EPREFIX}/usr")
-		$(use_with recode recode "${EPREFIX}/usr")
+		$(use_with spell pspell "${EROOT}/usr")
+		$(use_with recode recode "${EROOT}/usr")
 		$(use_enable simplexml simplexml)
 		$(use_enable sharedmem shmop)
-		$(use_with snmp snmp "${EPREFIX}/usr")
+		$(use_with snmp snmp "${EROOT}/usr")
 		$(use_enable soap soap)
 		$(use_enable sockets sockets)
-		$(use_with sodium sodium "${EPREFIX}/usr")
-		$(use_with sqlite sqlite3 "${EROOR}/usr")
+		$(use_with sodium sodium "${EROOT}/usr")
+		$(use_with sqlite sqlite3 "${EROOT}/usr")
 		$(use_enable sysvipc sysvmsg)
 		$(use_enable sysvipc sysvsem)
 		$(use_enable sysvipc sysvshm)
-		$(use_with tidy tidy "${EPREFIX}/usr")
+		$(use_with tidy tidy "${EROOT}/usr")
 		$(use_enable tokenizer tokenizer)
 		$(use_enable wddx wddx)
 		$(use_enable xml xml)
 		$(use_enable xmlreader xmlreader)
 		$(use_enable xmlwriter xmlwriter)
 		$(use_with xmlrpc xmlrpc)
-		$(use_with xslt xsl "${EPREFIX}/usr")
+		$(use_with xslt xsl "${EROOT}/usr")
 		$(use_enable zip zip)
-		$(use_with zip-encryption libzip "${EPREFIX}/usr")
-		$(use_with zlib zlib "${EPREFIX}/usr")
+		$(use_with zip-encryption libzip "${EROOT}/usr")
+		$(use_with zlib zlib "${EROOT}/usr")
 		$(use_enable debug debug)
 	)
 
@@ -319,22 +320,22 @@ src_configure() {
 		$(use_with cdb cdb)
 		$(use_with berkdb db4 "${EROOT}/usr")
 		$(use_enable flatfile flatfile)
-		$(use_with gdbm gdbm "${EPREFIX}/usr")
+		$(use_with gdbm gdbm "${EROOT}/usr")
 		$(use_enable inifile inifile)
-		$(use_with qdbm qdbm "${EPREFIX}/usr")
-		$(use_with lmdb lmdb "${EPREFIX}/usr")
+		$(use_with qdbm qdbm "${EROOT}/usr")
+		$(use_with lmdb lmdb "${EROOT}/usr")
 	)
 
 	# Support for the GD graphics library
 	our_conf+=(
-		$(use_with truetype freetype-dir "${EPREFIX}/usr")
+		$(use_with truetype freetype-dir "${EROOT}/usr")
 		$(use_enable cjk gd-jis-conv)
-		$(use_with gd jpeg-dir "${EPREFIX}/usr")
-		$(use_with gd png-dir "${EPREFIX}/usr")
-		$(use_with xpm xpm-dir "${EPREFIX}/usr")
+		$(use_with gd jpeg-dir "${EROOT}/usr")
+		$(use_with gd png-dir "${EROOT}/usr")
+		$(use_with xpm xpm-dir "${EROOT}/usr")
 	)
 	if use webp; then
-		our_conf+=( --with-webp-dir="${EPREFIX}/usr" )
+		our_conf+=( --with-webp-dir="${EROOT}/usr" )
 	fi
 	# enable gd last, so configure can pick up the previous settings
 	our_conf+=( $(use_with gd gd) )
@@ -342,19 +343,19 @@ src_configure() {
 	# IMAP support
 	if use imap ; then
 		our_conf+=(
-			$(use_with imap imap "${EPREFIX}/usr")
-			$(use_with ssl imap-ssl "${EPREFIX}/usr")
+			$(use_with imap imap "${EROOT}/usr")
+			$(use_with ssl imap-ssl "${EROOT}/usr")
 		)
 	fi
 
 	# Interbase/firebird support
-	our_conf+=( $(use_with firebird interbase "${EPREFIX}/usr") )
+	our_conf+=( $(use_with firebird interbase "${EROOT}/usr") )
 
 	# LDAP support
 	if use ldap ; then
 		our_conf+=(
-			$(use_with ldap ldap "${EPREFIX}/usr")
-			$(use_with ldap-sasl ldap-sasl "${EPREFIX}/usr")
+			$(use_with ldap ldap "${EROOT}/usr")
+			$(use_with ldap-sasl ldap-sasl "${EROOT}/usr")
 		)
 	fi
 
@@ -371,8 +372,8 @@ src_configure() {
 
 	# ODBC support
 	our_conf+=(
-		$(use_with odbc unixODBC "${EPREFIX}/usr")
-		$(use_with iodbc iodbc "${EPREFIX}/usr")
+		$(use_with odbc unixODBC "${EROOT}/usr")
+		$(use_with iodbc iodbc "${EROOT}/usr")
 	)
 
 	# Oracle support
@@ -381,25 +382,25 @@ src_configure() {
 	# PDO support
 	if use pdo ; then
 		our_conf+=(
-			$(use_with mssql pdo-dblib "${EPREFIX}/usr")
+			$(use_with mssql pdo-dblib "${EROOT}/usr")
 			$(use_with mysql pdo-mysql "${mysqllib}")
 			$(use_with postgres pdo-pgsql)
-			$(use_with sqlite pdo-sqlite "${EPREFIX}/usr")
-			$(use_with firebird pdo-firebird "${EPREFIX}/usr")
-			$(use_with odbc pdo-odbc "unixODBC,${EPREFIX}/usr")
+			$(use_with sqlite pdo-sqlite "${EROOT}/usr")
+			$(use_with firebird pdo-firebird "${EROOT}/usr")
+			$(use_with odbc pdo-odbc "unixODBC,${EROOT}/usr")
 			$(use_with oci8-instant-client pdo-oci)
 		)
 	fi
 
 	# readline/libedit support
 	our_conf+=(
-		$(use_with readline readline "${EPREFIX}/usr")
-		$(use_with libedit libedit "${EPREFIX}/usr")
+		$(use_with readline readline "${EROOT}/usr")
+		$(use_with libedit libedit "${EROOT}/usr")
 	)
 
 	# Session support
 	if use session ; then
-		our_conf+=( $(use_with session-mm mm "${EPREFIX}/usr") )
+		our_conf+=( $(use_with session-mm mm "${EROOT}/usr") )
 	else
 		our_conf+=( $(use_enable session session) )
 	fi
@@ -413,8 +414,8 @@ src_configure() {
 	# --with-pcre-valgrind cannot be enabled with system pcre
 	# Many arches don't support pcre-jit
 	our_conf+=(
-		--with-pcre-regex="${EPREFIX}/usr"
-		--with-pcre-dir="${EPREFIX}/usr"
+		--with-pcre-regex="${EROOT}/usr"
+		--with-pcre-dir="${EROOT}/usr"
 		--without-pcre-valgrind
 		--without-pcre-jit
 	)
@@ -480,6 +481,8 @@ src_configure() {
 		# (the common args) and $sapi_conf (the SAPI-specific args).
 		local myeconfargs=( "${our_conf[@]}" )
 		myeconfargs+=( "${sapi_conf[@]}" )
+		myeconfargs+=( ac_cv_header_sys_uio_h=yes )
+		myeconfargs+=( --with-flock-type=linux )
 
 		pushd "${BUILD_DIR}" > /dev/null || die
 		econf "${myeconfargs[@]}"
