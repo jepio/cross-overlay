@@ -1,0 +1,18 @@
+--- a/lib/roken/roken.h.in	2018-08-27 18:15:29.426086352 +0200
++++ b/lib/roken/roken.h.in	2018-08-27 18:15:03.495084604 +0200
+@@ -1226,6 +1226,7 @@ rk_random(void);
+ int ROKEN_LIB_FUNCTION rk_socket(int, int, int);
+ #endif
+ 
++#ifdef _WIN32
+ /* Microsoft VC 2010 POSIX definitions */
+ #ifndef EAFNOSUPPORT
+ #define EAFNOSUPPORT            102
+@@ -1251,6 +1252,7 @@ int ROKEN_LIB_FUNCTION rk_socket(int, in
+ #ifndef EWOULDBLOCK
+ #define EWOULDBLOCK             140
+ #endif
++#endif // _WIN32
+ 
+ #ifdef SOCKET_WRAPPER_REPLACE
+ #include <socket_wrapper.h>

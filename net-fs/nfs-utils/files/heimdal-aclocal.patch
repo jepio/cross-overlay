@@ -1,0 +1,12 @@
+--- a/aclocal/kerberos5.m4	2018-08-29 19:38:20.158522533 +0200
++++ a/aclocal/kerberos5.m4	2018-08-29 19:38:55.246524897 +0200
+@@ -49,7 +49,8 @@ AC_DEFUN([AC_KERBEROS_V5],[
+       dnl of Heimdal Kerberos on SuSe
+       elif test \( -f $dir/include/heim_err.h -o\
+       		 -f $dir/include/heimdal/heim_err.h \) -a \
+-                -f $dir/lib/libroken.a; then
++                \( -f $dir/lib/libroken.a -o \
++                   -f $dir/lib/libroken.so \) ; then
+          AC_DEFINE(HAVE_HEIMDAL, 1, [Define this if you have Heimdal Kerberos libraries])
+          KRBDIR="$dir"
+          gssapi_lib=gssapi

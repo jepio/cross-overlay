@@ -1,0 +1,21 @@
+--- a/cf/check-compile-et.m4	2018-08-27 19:41:10.342432785 +0200
++++ b/cf/check-compile-et.m4	2018-08-27 19:42:53.699439750 +0200
+@@ -29,7 +29,7 @@ if ${COMPILE_ET} conftest_et.et >/dev/nu
+   fi
+   dnl Check that the `prefix' and `index' directives were honored.
+   AC_LANG(C)
+-  AC_RUN_IFELSE([AC_LANG_SOURCE([
++  AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+ #include <com_err.h>
+ #include <string.h>
+ #include "conftest_et.h"
+@@ -38,8 +38,7 @@ int main(int argc, char **argv){
+ #error compile_et does not handle error_table N M
+ #endif
+ return (CONFTEST_CODE2 - CONFTEST_CODE1) != 127;}
+-  ])], [krb_cv_compile_et="yes"],[CPPFLAGS="${save_CPPFLAGS}"],
+-  [krb_cv_compile_et="yes" krb_cv_compile_et_cross=yes] )
++  ])], [krb_cv_compile_et="yes"],[CPPFLAGS="${save_CPPFLAGS}"])
+ fi
+ AC_MSG_RESULT(${krb_cv_compile_et})
+ if test "${krb_cv_compile_et}" = "yes" -a "${krb_cv_compile_et_cross}" = no; then

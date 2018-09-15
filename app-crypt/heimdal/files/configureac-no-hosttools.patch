@@ -1,0 +1,38 @@
+--- a/configure.ac	2017-12-08 08:36:46.000000000 +0100
++++ b/configure.ac	2018-08-27 18:19:57.915104444 +0200
+@@ -80,31 +80,11 @@ dnl
+ 
+ AM_CONDITIONAL(CROSS_COMPILE, test "${cross_compiling}" = yes)
+ 
+-AC_ARG_WITH(cross-tools,
+-	AS_HELP_STRING([--with-cross-tools=dir], [use cross tools in dir]),
+-	[if test "$withval" = "yes"; then
+-		AC_MSG_ERROR([Need path to cross tools])
+-	fi
+-	with_cross_tools="${with_cross_tools}/"
+-	])
++ASN1_COMPILE="\$(top_builddir)/lib/asn1/asn1_compile\$(EXEEXT)"
++SLC="\$(top_builddir)/lib/sl/slc"
+ 
+-if test "${cross_compiling}" != yes ; then
+-
+-   ASN1_COMPILE="\$(top_builddir)/lib/asn1/asn1_compile\$(EXEEXT)"
+-   SLC="\$(top_builddir)/lib/sl/slc"
+-
+-   ASN1_COMPILE_DEP="\$(ASN1_COMPILE)"
+-   SLC_DEP="\$(SLC)"
+-else
+-   ASN1_COMPILE="${with_cross_tools}asn1_compile"
+-   SLC="${with_cross_tools}slc"
+-
+-   ASN1_COMPILE_DEP=
+-   SLC_DEP=
+-
+-   ac_cv_prog_COMPILE_ET=${with_cross_tools}compile_et
+-
+-fi
++ASN1_COMPILE_DEP="\$(ASN1_COMPILE)"
++SLC_DEP="\$(SLC)"
+ 
+ AC_SUBST([ASN1_COMPILE])
+ AC_SUBST([ASN1_COMPILE_DEP])

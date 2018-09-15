@@ -1,0 +1,15 @@
+Index: work/nfs-utils-2.3.2/utils/gssd/gssd_proc.c
+===================================================================
+--- nfs-utils-2.3.2/utils/gssd/gssd_proc.c.orig
++++ nfs-utils-2.3.2/utils/gssd/gssd_proc.c
+@@ -551,8 +551,8 @@ krb5_use_machine_creds(struct clnt_info
+ 			if (gss_krb5_ccache_name(&min_stat, *ccname, NULL) !=
+ 					GSS_S_COMPLETE) {
+ 				printerr(1, "WARNING: gss_krb5_ccache_name "
+-					 "with name '%s' failed (%s)\n",
+-					 *ccname, error_message(min_stat));
++					 "with name '%s' failed (%d)\n",
++					 *ccname, min_stat);
+ 				continue;
+ 			}
+ 			if ((create_auth_rpc_client(clp, tgtname, rpc_clnt,

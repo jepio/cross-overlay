@@ -1,0 +1,14 @@
+--- old/libtool	2015-05-05 13:50:50.340341464 +0200
++++ new/libtool	2015-05-05 13:49:44.448340141 +0200
+@@ -8888,7 +8888,10 @@
+ 	      if test -n "$inst_prefix_dir"; then
+ 		case $libdir in
+ 		  [\\/]*)
+-		    func_append add_dir " -L$inst_prefix_dir$libdir"
++		    # EDIT: Remove $libdir search path on cross-compiled environment to
++		    # avoid "file format not recognized" errors. If $inst_prefix_dir is
++		    # given, don't bother adding $libdir to the dependency search path.
++		    add_dir="-L$inst_prefix_dir$libdir"
+ 		    ;;
+ 		esac
+ 	      fi
