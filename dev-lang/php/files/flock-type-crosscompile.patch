@@ -1,0 +1,49 @@
+diff -durpN php-5.5.15.old/configure.in php-5.5.15/configure.in
+--- php-5.5.15.old/configure.ac	2014-07-23 11:00:58.000000000 +0200
++++ php-5.5.15/configure.ac	2014-08-21 10:28:03.109623271 +0200
+@@ -687,6 +687,10 @@ asprintf \
+ nanosleep \
+ )
+ 
++PHP_ARG_WITH(flock-type, flock ordering type (use for cross compiling),
++[  --with-flock-type={linux|bsd}
++                          Set the flock ordering type for further checks during cross-compiling], unknown, no)
++
+ dnl Some systems (like OpenSolaris) do not have nanosleep in libc
+ PHP_CHECK_FUNC_LIB(nanosleep, rt)
+ 
+diff -durpN php-5.5.15.old/ext/opcache/config.m4 php-5.5.15/ext/opcache/config.m4
+--- php-5.5.15.old/ext/opcache/config.m4	2014-07-23 11:00:58.000000000 +0200
++++ php-5.5.15/ext/opcache/config.m4	2014-08-21 10:40:40.207914012 +0200
+@@ -341,7 +341,14 @@ AC_TRY_RUN([
+ 	flock_type=linux
+     AC_DEFINE([HAVE_FLOCK_LINUX], [], [Struct flock is Linux-type])
+     AC_MSG_RESULT("yes")
+-], AC_MSG_RESULT("no") )
++], AC_MSG_RESULT("no"), [
++  if test "$PHP_FLOCK_TYPE" == "linux"; then
++    AC_MSG_RESULT("yes")
++    flock_type=linux
++  else
++    AC_MSG_RESULT("no")
++  fi
++] )
+ 
+ AC_MSG_CHECKING("whether flock struct is BSD ordered")
+ AC_TRY_RUN([
+@@ -357,7 +364,14 @@ AC_TRY_RUN([
+ 	flock_type=bsd
+     AC_DEFINE([HAVE_FLOCK_BSD], [], [Struct flock is BSD-type]) 
+     AC_MSG_RESULT("yes")
+-], AC_MSG_RESULT("no") )
++], AC_MSG_RESULT("no"), [
++  if test "$PHP_FLOCK_TYPE" == "bsd"; then
++    AC_MSG_RESULT("yes")
++    flock_type=bsd
++  else
++    AC_MSG_RESULT("no")
++  fi
++])
+ 
+ if test "$flock_type" == "unknown"; then
+ 	AC_MSG_ERROR([Don't know how to define struct flock on this system[,] set --enable-opcache=no])

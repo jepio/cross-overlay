@@ -1,0 +1,76 @@
+From 17cc5645f3acf943a5a06465d09d0ebcfea987bd Mon Sep 17 00:00:00 2001
+From: Koen Kooi <koen@dominion.thruhere.net>
+Date: Wed, 2 Nov 2011 16:54:57 +0100
+Subject: [PATCH] Upstream-Status: Pending
+
+---
+ acinclude.m4        | 3 ++-
+ ext/iconv/config.m4 | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+Index: php-7.2.9/acinclude.m4
+===================================================================
+--- php-7.2.9.orig/acinclude.m4
++++ php-7.2.9/acinclude.m4
+@@ -2448,7 +2448,8 @@ AC_DEFUN([PHP_SETUP_ICONV], [
+   dnl Check libc first if no path is provided in --with-iconv
+   dnl
+ 
+-  if test "$PHP_ICONV" = "yes"; then
++  dnl must check against no, not against yes as PHP_ICONV can also include a path, which implies yes
++  if test "$PHP_ICONV" != "no"; then
+     dnl Reset LIBS temporarily as it may have already been included
+     dnl -liconv in.
+     LIBS_save="$LIBS"
+Index: php-7.2.9/ext/iconv/config.m4
+===================================================================
+--- php-7.2.9.orig/ext/iconv/config.m4
++++ php-7.2.9/ext/iconv/config.m4
+@@ -15,7 +15,7 @@ if test "$PHP_ICONV" != "no"; then
+ 
+   if test "$iconv_avail" != "no"; then
+     if test -z "$ICONV_DIR"; then
+-      for i in /usr/local /usr; do
++      for i in $PHP_ICONV /usr/local /usr; do
+         if test -f "$i/include/iconv.h" || test -f "$i/include/giconv.h"; then
+           PHP_ICONV_PREFIX="$i"
+           break
+@@ -28,14 +28,24 @@ if test "$PHP_ICONV" != "no"; then
+       PHP_ICONV_PREFIX="$ICONV_DIR"
+     fi
+ 
+-    CFLAGS="-I$PHP_ICONV_PREFIX/include $CFLAGS"
+-    LDFLAGS="-L$PHP_ICONV_PREFIX/$PHP_LIBDIR $LDFLAGS"
++    if test "$PHP_ICONV_PREFIX" != "/usr"; then
++      CFLAGS="-I$PHP_ICONV_PREFIX/include $CFLAGS"
++      LDFLAGS="-L$PHP_ICONV_PREFIX/$PHP_LIBDIR $LDFLAGS"
++    fi
+ 
+     if test -r "$PHP_ICONV_PREFIX/include/giconv.h"; then
+-      PHP_ICONV_H_PATH="$PHP_ICONV_PREFIX/include/giconv.h"
++      if test "$PHP_ICONV_PREFIX" != "/usr"; then
++        PHP_ICONV_H_PATH="$PHP_ICONV_PREFIX/include/giconv.h"
++      else
++        PHP_ICONV_H_PATH="giconv.h"
++      fi
+     else
+-      PHP_ICONV_H_PATH="$PHP_ICONV_PREFIX/include/iconv.h"
+-	fi
++      if test "$PHP_ICONV_PREFIX" != "/usr"; then
++        PHP_ICONV_H_PATH="$PHP_ICONV_PREFIX/include/iconv.h"
++      else
++        PHP_ICONV_H_PATH="iconv.h"
++      fi
++    fi
+ 
+     AC_MSG_CHECKING([if iconv is glibc's])
+     AC_TRY_LINK([#include <gnu/libc-version.h>],[gnu_get_libc_version();],
+@@ -202,7 +212,7 @@ int main() {
+       AC_MSG_RESULT([no])
+     ])
+ 
+-    PHP_NEW_EXTENSION(iconv, iconv.c, $ext_shared,, [-I\"$PHP_ICONV_PREFIX/include\" -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1])
++    PHP_NEW_EXTENSION(iconv, iconv.c, $ext_shared,, [-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1])
+     PHP_SUBST(ICONV_SHARED_LIBADD)
+     PHP_INSTALL_HEADERS([ext/iconv/])
+   else

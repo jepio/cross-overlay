@@ -226,7 +226,7 @@ src_prepare() {
 	sed -i "s~^include=.*$~include=${PHP_INI_DIR}/fpm.d/*.conf~" \
 		sapi/fpm/php-fpm.conf.in \
 		|| die 'failed to move the include directory in php-fpm.conf'
-	eautoreconf
+	./buildconf --force || die "buildconf failed"
 }
 
 src_configure() {
