@@ -154,6 +154,9 @@ PATCHES=(
 	"${FILESDIR}/ac_try_run-crosscompile.patch"
 	"${FILESDIR}/iconv.patch"
 	"${FILESDIR}/flock-type-crosscompile.patch"
+	"${FILESDIR}/pear-makefile.patch"
+	"${FILESDIR}/phar-makefile.patch"
+	"${FILESDIR}/php_exec_native.patch"
 )
 
 PHP_MV="$(ver_cut 1)"
